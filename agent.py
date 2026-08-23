@@ -1,5 +1,7 @@
 """A tabular Q-learning agent implemented with NumPy."""
 
+import random
+
 import numpy as np
 
 
@@ -33,17 +35,19 @@ class QLearningAgent:
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.min_epsilon = min_epsilon
-        self.rng = np.random.default_rng(seed)
+        # The standard-library RNG is enough for epsilon-greedy decisions.
+        # NumPy remains responsible for the Q-table and numerical operations.
+        self.rng = random.Random(seed)
 
     def choose_action(self, state, training=True):
         """Choose an action using epsilon-greedy exploration."""
         if training and self.rng.random() < self.epsilon:
-            return int(self.rng.integers(self.action_count))
+            return self.rng.randrange(self.action_count)
 
         values = self.q_table[state]
         best_actions = np.flatnonzero(values == values.max())
         # Random tie-breaking avoids always preferring UP when values are equal.
-        return int(self.rng.choice(best_actions))
+        return int(self.rng.choice(best_actions.tolist()))
 
     def learn(self, state, action, reward, next_state, done):
         """Apply one Bellman/Q-learning update and return the new Q-value."""
@@ -59,4 +63,3 @@ class QLearningAgent:
         """Reduce exploration once at the end of each training episode."""
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
         return self.epsilon
-
