@@ -1,6 +1,7 @@
 """A tabular Q-learning agent implemented with NumPy."""
 
 import random
+from pathlib import Path
 
 import numpy as np
 
@@ -63,3 +64,39 @@ class QLearningAgent:
         """Reduce exploration once at the end of each training episode."""
         self.epsilon = max(self.min_epsilon, self.epsilon * self.epsilon_decay)
         return self.epsilon
+
+    def save(self, path):
+        """Persist the learned Q-table and hyperparameters."""
+        path = Path(path)
+        np.savez_compressed(
+            path,
+            q_table=self.q_table,
+            learning_rate=self.learning_rate,
+            discount_factor=self.discount_factor,
+            epsilon=self.epsilon,
+            epsilon_decay=self.epsilon_decay,
+            min_epsilon=self.min_epsilon,
+        )
+        return path
+
+    @classmethod
+    def load(cls, path, seed=None):
+        """Restore an agent previously written by save()."""
+        with np.load(path) as data:
+            q_table = data["q_table"]
+            if q_table.ndim != 3:
+                raise ValueError("Saved Q-table must have row, column, and action axes")
+            rows, cols, action_count = q_table.shape
+            agent = cls(
+                rows=rows,
+                cols=cols,
+                action_count=action_count,
+                learning_rate=float(data["learning_rate"]),
+                discount_factor=float(data["discount_factor"]),
+                epsilon=float(data["epsilon"]),
+                epsilon_decay=float(data["epsilon_decay"]),
+                min_epsilon=float(data["min_epsilon"]),
+                seed=seed,
+            )
+            agent.q_table[:] = q_table
+        return agent
