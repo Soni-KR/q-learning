@@ -35,9 +35,9 @@ def run_episode(env, agent, max_steps=250, training=True):
     return total_reward, env.steps, env.done
 
 
-def train_agent(episodes=1000, max_steps=250, seed=42, report_every=100):
+def train_agent(episodes=1000, max_steps=250, seed=42, report_every=100, maze=None):
     """Train an agent and return it together with per-episode history."""
-    env = MazeEnvironment()
+    env = MazeEnvironment() if maze is None else MazeEnvironment(maze)
     agent = QLearningAgent(
         rows=env.rows,
         cols=env.cols,
@@ -81,9 +81,9 @@ def train_agent(episodes=1000, max_steps=250, seed=42, report_every=100):
     return agent, history
 
 
-def evaluate_agent(agent, episodes=20, max_steps=250):
+def evaluate_agent(agent, episodes=20, max_steps=250, maze=None):
     """Evaluate the greedy policy without exploration or Q-table updates."""
-    env = MazeEnvironment()
+    env = MazeEnvironment() if maze is None else MazeEnvironment(maze)
     results = [
         run_episode(env, agent, max_steps=max_steps, training=False)
         for _ in range(episodes)

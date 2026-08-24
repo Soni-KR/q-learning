@@ -1,6 +1,6 @@
 import pygame
 
-from maze import START_POSITION, TILE_SIZE, is_walkable
+from maze import DEFAULT_MAZE, TILE_SIZE, find_cell, is_walkable
 
 
 class Player:
@@ -8,7 +8,9 @@ class Player:
 
     COLOR = (52, 152, 219)
 
-    def __init__(self):
+    def __init__(self, maze=DEFAULT_MAZE):
+        self.maze = maze
+        self.start_position = find_cell("P", maze)
         self.reset()
 
     @property
@@ -16,7 +18,7 @@ class Player:
         return self.row, self.col
 
     def reset(self):
-        self.row, self.col = START_POSITION
+        self.row, self.col = self.start_position
         self.moves = 0
 
     def move(self, row_change, col_change):
@@ -24,7 +26,7 @@ class Player:
         next_row = self.row + row_change
         next_col = self.col + col_change
 
-        if not is_walkable(next_row, next_col):
+        if not is_walkable(next_row, next_col, self.maze):
             return False
 
         self.row = next_row

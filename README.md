@@ -1,7 +1,8 @@
-# Q-Learning Maze Agent
+# Velocity Maze: Human vs Q-Learner
 
-A Python reinforcement-learning project where you can solve a maze manually,
-train a tabular Q-learning agent, and watch its learned policy escape.
+A speed-racing-inspired Python reinforcement-learning game where a human races
+an agent that learns the same maze live. The visual theme is an original homage
+to fast 1990s platform games, using vector shapes rather than copied assets.
 
 ## Features
 
@@ -12,6 +13,11 @@ train a tabular Q-learning agent, and watch its learned policy escape.
 - Animated trained-agent playback with path visualization
 - Matplotlib learning curves
 - Saved Q-table that is restored on the next launch
+- Three circuits with 11-, 24-, and 58-move optimal routes
+- Human vs learner mode: each human tile funds live AI training
+- Separate saved model and learning telemetry for every circuit
+- Blue human and orange AI racers with speed trails and ring-like goals
+- Sonic-reference app icon and menu badge with blue quills, speed lines, and a ring
 
 ## Setup
 
@@ -27,9 +33,12 @@ python main.py
 
 | Mode | Control | Action |
 |---|---|---|
-| Menu | Mouse | Select play, train, watch, or graphs |
+| Menu | Circuit button | Cycle through the three mazes |
+| Menu | Mouse | Select time trial, live race, training, replay, or telemetry |
 | Manual | Arrow keys | Move the player |
 | Manual | R | Reset the maze |
+| Race | Arrow keys | Move and grant the AI its next training budget |
+| Race | R | Start a fresh rematch with an empty Q-table |
 | Watch | R | Replay the learned route |
 | Watch | + / - | Increase or decrease animation speed |
 | Any mode | Esc | Return to the menu |

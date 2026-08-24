@@ -1,6 +1,6 @@
 """The maze exposed as a small reinforcement-learning environment."""
 
-from maze import GOAL_POSITION, MAZE, START_POSITION, is_walkable
+from maze import DEFAULT_MAZE, find_cell, is_walkable
 
 
 class MazeEnvironment:
@@ -24,10 +24,13 @@ class MazeEnvironment:
     WALL_REWARD = -5
     GOAL_REWARD = 100
 
-    def __init__(self):
-        self.rows = len(MAZE)
-        self.cols = len(MAZE[0])
-        self.position = START_POSITION
+    def __init__(self, maze=DEFAULT_MAZE):
+        self.maze = maze
+        self.rows = maze.rows
+        self.cols = maze.cols
+        self.start_position = find_cell("P", maze)
+        self.goal_position = find_cell("G", maze)
+        self.position = self.start_position
         self.done = False
         self.steps = 0
 
@@ -38,7 +41,7 @@ class MazeEnvironment:
 
     def reset(self):
         """Start a new episode and return its initial state."""
-        self.position = START_POSITION
+        self.position = self.start_position
         self.done = False
         self.steps = 0
         return self.state
@@ -55,16 +58,15 @@ class MazeEnvironment:
         candidate = row + row_change, col + col_change
         self.steps += 1
 
-        if not is_walkable(*candidate):
+        if not is_walkable(*candidate, self.maze):
             # A wall hit costs more and leaves the agent in the same state.
             reward = self.WALL_REWARD
         else:
             self.position = candidate
             reward = self.MOVE_REWARD
 
-        if self.position == GOAL_POSITION:
+        if self.position == self.goal_position:
             reward = self.GOAL_REWARD
             self.done = True
 
         return self.state, reward, self.done
-
